@@ -1,6 +1,6 @@
-import Transaction from "../models/TransactionModel.js";
-import User from "../models/UserSchema.js";
-import moment from "moment";
+import Transaction from '../models/TransactionModel.js';
+import User from '../models/UserSchema.js';
+import moment from 'moment';
 
 export const addTransactionController = async (req, res) => {
   try {
@@ -24,7 +24,7 @@ export const addTransactionController = async (req, res) => {
     ) {
       return res.status(408).json({
         success: false,
-        messages: "Please Fill all fields",
+        messages: 'Please Fill all fields',
       });
     }
 
@@ -33,7 +33,7 @@ export const addTransactionController = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "User not found",
+        message: 'User not found',
       });
     }
 
@@ -53,7 +53,7 @@ export const addTransactionController = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Transaction Added Successfully",
+      message: 'Transaction Added Successfully',
     });
   } catch (err) {
     return res.status(401).json({
@@ -72,7 +72,7 @@ export const getAllTransactionController = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "User not found",
+        message: 'User not found',
       });
     }
 
@@ -81,22 +81,23 @@ export const getAllTransactionController = async (req, res) => {
       user: userId,
     };
 
-    if (type !== "all") {
+    if (type !== 'all') {
       query.transactionType = type;
     }
 
     // Add date conditions based on 'frequency' and 'custom' range
-    if (frequency !== "custom") {
+    if (frequency !== 'custom' && frequency !== 'all') {
       query.date = {
-        $gt: moment().subtract(Number(frequency), "days").toDate(),
+        $gt: moment().subtract(Number(frequency), 'days').toDate(),
       };
+    } else if (frequency === 'all') {
+      delete query.date
     } else if (startDate && endDate) {
       query.date = {
         $gte: moment(startDate).toDate(),
         $lte: moment(endDate).toDate(),
       };
     }
-
     const transactions = await Transaction.find(query);
 
     return res.status(200).json({
@@ -121,7 +122,7 @@ export const deleteTransactionController = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "User not found",
+        message: 'User not found',
       });
     }
     const transactionElement = await Transaction.findByIdAndDelete(
@@ -131,7 +132,7 @@ export const deleteTransactionController = async (req, res) => {
     if (!transactionElement) {
       return res.status(400).json({
         success: false,
-        message: "transaction not found",
+        message: 'transaction not found',
       });
     }
 
@@ -167,7 +168,7 @@ export const updateTransactionController = async (req, res) => {
     if (!transactionElement) {
       return res.status(400).json({
         success: false,
-        message: "transaction not found",
+        message: 'transaction not found',
       });
     }
 
